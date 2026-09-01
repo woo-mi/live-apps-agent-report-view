@@ -174,12 +174,19 @@
   }
 
   /* ---------- Engagement mix ---------- */
-  .legend { display: flex; gap: 24px; margin-top: 40px; font-size: 12px; color: var(--ink); }
+  .chart-card {
+    margin-top: 24px;
+    border: 1px solid #e4e8f2;
+    border-radius: 16px;
+    padding: 32px;
+  }
+  .legend { display: flex; gap: 24px; font-size: 13px; color: var(--muted-warm); }
   .legend span { display: inline-flex; align-items: center; gap: 7px; }
   .swatch { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
 
   .barrow { display: flex; align-items: center; gap: 24px; margin-top: 16px; }
-  .barrow .rowlabel { width: 118px; flex-shrink: 0; }
+  .barrow:first-of-type { margin-top: 28px; }
+  .barrow .rowlabel { width: 100px; flex-shrink: 0; }
   .barrow .rowlabel .r { font-size: 14px; font-weight: 500; line-height: 18px; color: var(--ink); }
   .barrow .rowlabel .c { font-size: 13px; line-height: 16px; color: var(--muted-warm); margin-top: 3px; }
   .bar { flex: 1; display: flex; height: 66px; }
@@ -351,29 +358,31 @@
             <h2 class="section">Engagement mix</h2>
             <p class="section-body">Both roles cover the same span of bands, but admins sit at the extremes. Seven of twenty admin accounts fall below typical — against three of twenty-three for explorers, which cluster in the healthy middle.</p>
 
-            <div class="legend">
-              <span><i class="swatch" style="background:#9e2b1e"></i>Below-typical &lt;0.40</span>
-              <span><i class="swatch" style="background:#d8cdb5"></i>Typical 0.40–0.55</span>
-              <span><i class="swatch" style="background:#a89a7e"></i>Strong 0.55–0.70</span>
-              <span><i class="swatch" style="background:#1a1712"></i>Exceptional &gt;0.70</span>
-            </div>
-
-            <div class="barrow">
-              <div class="rowlabel"><div class="r">Explorer</div><div class="c">23 accounts</div></div>
-              <div class="bar">
-                <div class="seg" style="flex-grow:3;background:#9e2b1e;color:#f4f1ea">3</div>
-                <div class="seg" style="flex-grow:8;background:#d8cdb5;color:#1a1712">8</div>
-                <div class="seg" style="flex-grow:6;background:#a89a7e;color:#f4f1ea">6</div>
-                <div class="seg" style="flex-grow:6;background:#1a1712;color:#f4f1ea">6</div>
+            <div class="chart-card">
+              <div class="legend">
+                <span><i class="swatch" style="background:#45b4d0"></i>Below-typical &lt;0.40</span>
+                <span><i class="swatch" style="background:#0173b9"></i>Typical 0.40–0.55</span>
+                <span><i class="swatch" style="background:#33a363"></i>Strong 0.55–0.70</span>
+                <span><i class="swatch" style="background:#fd8b00"></i>Exceptional &gt;0.70</span>
               </div>
-            </div>
-            <div class="barrow">
-              <div class="rowlabel"><div class="r">Admin</div><div class="c">20 accounts</div></div>
-              <div class="bar">
-                <div class="seg" style="flex-grow:7;background:#9e2b1e;color:#f4f1ea">7</div>
-                <div class="seg" style="flex-grow:3;background:#d8cdb5;color:#1a1712">3</div>
-                <div class="seg" style="flex-grow:4;background:#a89a7e;color:#f4f1ea">4</div>
-                <div class="seg" style="flex-grow:6;background:#1a1712;color:#f4f1ea">6</div>
+
+              <div class="barrow">
+                <div class="rowlabel"><div class="r">Explorer</div><div class="c">23 accounts</div></div>
+                <div class="bar">
+                  <div class="seg" style="flex-grow:3;background:#45b4d0;color:#f4f1ea">3</div>
+                  <div class="seg" style="flex-grow:8;background:#0173b9;color:#f4f1ea">8</div>
+                  <div class="seg" style="flex-grow:6;background:#33a363;color:#f4f1ea">6</div>
+                  <div class="seg" style="flex-grow:6;background:#fd8b00;color:#f4f1ea">6</div>
+                </div>
+              </div>
+              <div class="barrow">
+                <div class="rowlabel"><div class="r">Admin</div><div class="c">20 accounts</div></div>
+                <div class="bar">
+                  <div class="seg" style="flex-grow:7;background:#45b4d0;color:#f4f1ea">7</div>
+                  <div class="seg" style="flex-grow:3;background:#0173b9;color:#f4f1ea">3</div>
+                  <div class="seg" style="flex-grow:4;background:#33a363;color:#f4f1ea">4</div>
+                  <div class="seg" style="flex-grow:6;background:#fd8b00;color:#f4f1ea">6</div>
+                </div>
               </div>
             </div>
 
