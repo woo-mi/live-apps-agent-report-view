@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agent Report View</title>
+</head>
+<body>
+<meta charset="utf-8">
+<title>Agent Report View</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --page: #ffffff;
+    --ink: #1a1712;
+    --ink-strong: #111111;
+    --ink-black: #0a0a0a;
+    --muted-warm: #6b6355;
+    --muted: #6b6b6b;
+    --muted-2: #6e6e6e;
+    --faint: #9a9a9a;
+    --band-below: #9e2b1e;
+    --band-typical: #d8cdb5;
+    --band-strong: #a89a7e;
+    --band-exceptional: #1a1712;
+    --cream: #f4f1ea;
+    --rule: #1a1712;
+    --table-border: #d8d2c4;
+    --card-border: #eae8e2;
+    --rail-border: #eeece6;
+    --sans: "Helvetica Neue", Helvetica, Arial, system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background: var(--page);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .app {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  /* ---------- Nav rail ---------- */
+  .rail {
+    width: 48px;
+    flex-shrink: 0;
+    border-right: 1px solid var(--rail-border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 0;
+    background: #fff;
+  }
+  .rail .logo {
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 20px;
+  }
+  .rail-group { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .rail-btn {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: #8b8b8b;
+    cursor: pointer;
+  }
+  .rail-btn:hover { background: #f5f4f1; color: #4a4a4a; }
+  .rail-btn.active { background: #f1efe9; color: var(--ink); }
+  .rail-divider { width: 28px; height: 1px; background: var(--rail-border); margin: 10px 0; }
+  .rail-spacer { flex: 1; }
+  .rail-badge {
+    position: relative;
+  }
+  .rail-badge .dot {
+    position: absolute; top: 3px; right: 4px;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: #e11d1d; color: #fff;
+    font-size: 9px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    border: 2px solid #fff;
+  }
+  .avatar {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: #f4c8de; color: #b13a75;
+    font-size: 12px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ---------- Main column ---------- */
+  .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+  .topbar {
+    height: 48px; flex-shrink: 0;
+    display: flex; align-items: center;
+    padding: 0 16px;
+    border-bottom: 1px solid var(--card-border);
+    gap: 12px;
+  }
+  .topbar .icon-btn { color: #9a9a9a; display: flex; cursor: pointer; }
+  .topbar .icon-btn:hover { color: #555; }
+  .crumb {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: #4a4a4a; font-weight: 500;
+  }
+  .crumb .sep { color: #bdbdbd; }
+  .crumb .muted { color: #8b8b8b; font-weight: 400; }
+  .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 14px; }
+
+  .scroll { flex: 1; overflow-y: auto; background: var(--page); }
+  .canvas { padding: 24px; }
+  .card {
+    max-width: 1432px; margin: 0 auto;
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    background: #fff;
+    padding: 60px 100px 88px;
+  }
+
+  /* ---------- Report head ---------- */
+  .report { max-width: 1232px; margin: 0 auto; }
+  .eyebrow {
+    font-size: 12px; font-weight: 500; line-height: 16px;
+    color: var(--muted-2);
+  }
+  h1.title {
+    font-size: 34px; line-height: 38px; letter-spacing: -0.02em;
+    font-weight: 700; color: var(--ink-strong);
+    margin: 18px 0 0;
+  }
+
+  .head-grid {
+    display: grid; grid-template-columns: 519px 1fr;
+    gap: 120px; margin-top: 44px;
+  }
+  .collabel {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.02em;
+    font-weight: 500; color: var(--faint); line-height: 14px;
+    margin-bottom: 18px;
+  }
+  .lede { font-size: 17px; line-height: 27px; color: var(--ink-strong); margin: 0; }
+
+  .metric + .metric { margin-top: 28px; }
+  .metric .num {
+    font-size: 24px; line-height: 30px; letter-spacing: -0.045em;
+    font-weight: 500; color: var(--ink-strong);
+  }
+  .metric .lab { font-size: 17px; line-height: 22px; color: var(--ink-strong); margin-top: 6px; }
+  .metric .sub { font-size: 13px; line-height: 16px; color: var(--muted-2); margin-top: 8px; }
+
+  hr.rule { border: 0; border-top: 1px solid #e7e4dd; margin: 56px 0 0; }
+
+  h2.section {
+    font-size: 24px; line-height: 30px; font-weight: 700; color: var(--ink);
+    margin: 56px 0 0; letter-spacing: -0.01em;
+  }
+  .section-body {
+    font-size: 17px; line-height: 27px; color: var(--ink-strong);
+    max-width: 519px; margin: 18px 0 0;
+  }
+
+  /* ---------- Engagement mix ---------- */
+  .legend { display: flex; gap: 24px; margin-top: 40px; font-size: 12px; color: var(--ink); }
+  .legend span { display: inline-flex; align-items: center; gap: 7px; }
+  .swatch { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+
+  .barrow { display: flex; align-items: center; gap: 24px; margin-top: 16px; }
+  .barrow .rowlabel { width: 118px; flex-shrink: 0; }
+  .barrow .rowlabel .r { font-size: 14px; font-weight: 500; line-height: 18px; color: var(--ink); }
+  .barrow .rowlabel .c { font-size: 13px; line-height: 16px; color: var(--muted-warm); margin-top: 3px; }
+  .bar { flex: 1; display: flex; height: 66px; }
+  .seg { display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 500; }
+
+  /* ---------- Table ---------- */
+  .table { margin-top: 40px; }
+  .thead {
+    display: flex; align-items: baseline;
+    border-bottom: 1px solid var(--rule);
+    padding: 18px 0 14px;
+  }
+  .th {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--muted-warm);
+    flex-shrink: 0; font-family: system-ui, sans-serif;
+  }
+  .tr {
+    display: flex; align-items: center;
+    border-top: 1px solid var(--table-border);
+    padding: 15px 0;
+  }
+  .tr:first-child { border-top: 0; }
+  .td { flex-shrink: 0; font-size: 15px; line-height: 18px; color: var(--ink); }
+  .col-cust { width: 196px; }
+  .col-role { width: 150px; }
+  .col-7d { width: 96px; }
+  .col-30d { width: 96px; }
+  .col-ratio { width: 128px; }
+  .col-band { width: 214px; padding-left: 26px; }
+  .col-e7 { width: 168px; }
+  .col-e30 { width: 184px; }
+  .num-cell { display: flex; justify-content: flex-end; text-align: right; }
+  .cust { font-weight: 500; }
+  .role { font-style: italic; color: var(--muted-warm); }
+  .ratio { font-weight: 500; }
+  .bandcell { display: flex; align-items: center; gap: 11px; }
+  .banddot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .below-text { color: var(--band-below); }
+
+  .tfoot {
+    text-align: right; font-size: 13px; font-style: italic;
+    color: var(--muted-warm); margin-top: 18px;
+  }
+
+  /* ---------- Recommendations ---------- */
+  .rec { display: flex; gap: 24px; padding: 24px 0; border-top: 1px solid #e7e4dd; }
+  .rec:first-of-type { border-top: 0; }
+  .rec .idx {
+    width: 26px; flex-shrink: 0;
+    font-size: 24px; line-height: 29px; letter-spacing: -0.02em;
+    color: #6b6b6b;
+  }
+  .rec .body { max-width: 892px; }
+  .rec .h { font-size: 24px; line-height: 29px; color: var(--ink-black); }
+  .rec .p { font-size: 16px; line-height: 23px; color: var(--muted); margin-top: 9px; }
+
+  /* ---------- Method ---------- */
+  .method { display: grid; grid-template-columns: 519px 519px; gap: 120px; margin-top: 40px; }
+  .method p { font-size: 15px; line-height: 24px; color: var(--muted); margin: 0; }
+
+  @media (max-width: 1100px) {
+    .card { padding: 48px 40px 64px; }
+    .head-grid { grid-template-columns: 1fr; gap: 48px; }
+    .method { grid-template-columns: 1fr; gap: 32px; }
+  }
+</style>
+
+<div class="app">
+  <!-- NAV RAIL -->
+  <nav class="rail">
+    <div class="logo">
+      <svg width="24" height="26" viewBox="0 0 24 26" fill="none">
+        <path d="M12 1 L22 6.5 V19.5 L12 25 L2 19.5 V6.5 Z" stroke="#1a1712" stroke-width="1.6" fill="none"/>
+        <circle cx="12" cy="13" r="2.4" fill="#1a1712"/>
+        <circle cx="12" cy="4.5" r="1.5" fill="#1a1712"/>
+        <circle cx="21" cy="18" r="1.5" fill="#1a1712"/>
+        <circle cx="3" cy="18" r="1.5" fill="#1a1712"/>
+        <path d="M12 11 V6 M13.7 14 L19.6 17.4 M10.3 14 L4.4 17.4" stroke="#1a1712" stroke-width="1.1"/>
+      </svg>
+    </div>
+
+    <div class="rail-group">
+      <div class="rail-btn" title="New chat">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      </div>
+      <div class="rail-btn" title="Dashboards">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+      </div>
+      <div class="rail-btn active" title="Agents">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2"/></svg>
+      </div>
+      <div class="rail-btn" title="Domains">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg>
+      </div>
+      <div class="rail-btn" title="Connections">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M9 15l6-6M8.5 8.5l-1.8 1.8a4 4 0 005.6 5.6l1.8-1.8M15.5 15.5l1.8-1.8a4 4 0 00-5.6-5.6L9.9 9.9"/></svg>
+      </div>
+      <div class="rail-btn" title="Chat log">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 01-9 8.4 9 9 0 01-3.9-.9L3 20l1.1-4.1A8.4 8.4 0 1121 11.5z"/></svg>
+      </div>
+      <div class="rail-btn" title="More">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
+      </div>
+      <div class="rail-btn" title="Settings">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.6 1.6 0 00-1.8-.3 1.6 1.6 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.6 1.6 0 00-1-1.5 1.6 1.6 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.6 1.6 0 00.3-1.8 1.6 1.6 0 00-1.5-1H3a2 2 0 110-4h.1a1.6 1.6 0 001.5-1 1.6 1.6 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.6 1.6 0 001.8.3H9a1.6 1.6 0 001-1.5V3a2 2 0 114 0v.1a1.6 1.6 0 001 1.5 1.6 1.6 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.6 1.6 0 00-.3 1.8V9a1.6 1.6 0 001.5 1H21a2 2 0 110 4h-.1a1.6 1.6 0 00-1.5 1z"/></svg>
+      </div>
+    </div>
+
+    <div class="rail-divider"></div>
+    <div class="rail-btn" title="Search">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+    </div>
+
+    <div class="rail-spacer"></div>
+
+    <div class="rail-btn rail-badge" title="Notifications">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg>
+      <span class="dot">1</span>
+    </div>
+    <div class="rail-btn" title="Account" style="margin-top:6px;">
+      <span class="avatar">M</span>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <span class="icon-btn" title="Toggle sidebar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg>
+      </span>
+      <span class="icon-btn" title="Back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </span>
+      <div class="crumb">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2"/></svg>
+        <span>Agents</span><span class="sep">/</span><span class="muted">Alonzo's user engagement analysis</span>
+      </div>
+      <div class="topbar-right">
+        <span class="icon-btn" title="Share">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
+        </span>
+        <span class="icon-btn" title="More">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg>
+        </span>
+      </div>
+    </div>
+
+    <div class="scroll">
+      <div class="canvas">
+        <div class="card">
+          <div class="report">
+
+            <!-- HEAD -->
+            <div class="eyebrow">Wisdom · Engagement Analysis</div>
+            <h1 class="title">One Portfolio, Two Roles</h1>
+
+            <div class="head-grid">
+              <div>
+                <div class="collabel">Overview</div>
+                <p class="lede">Engagement is healthy for both roles. The risk is account-level unevenness — explorers carry three below-typical accounts, admins carry seven — which makes admin reactivation the more immediate coverage gap.</p>
+              </div>
+              <div>
+                <div class="collabel">Metrics</div>
+                <div class="metric">
+                  <div class="num">57.91%</div>
+                  <div class="lab">Explorer engagement</div>
+                  <div class="sub">681 of 1,176 active · 23 customer accounts</div>
+                </div>
+                <div class="metric">
+                  <div class="num">54.67%</div>
+                  <div class="lab">Admin engagement</div>
+                  <div class="sub">123 of 1,225 active · 20 accounts</div>
+                </div>
+              </div>
+            </div>
+
+            <hr class="rule">
+
+            <!-- ENGAGEMENT MIX -->
+            <h2 class="section">Engagement mix</h2>
+            <p class="section-body">Both roles cover the same span of bands, but admins sit at the extremes. Seven of twenty admin accounts fall below typical — against three of twenty-three for explorers, which cluster in the healthy middle.</p>
+
+            <div class="legend">
+              <span><i class="swatch" style="background:#9e2b1e"></i>Below-typical &lt;0.40</span>
+              <span><i class="swatch" style="background:#d8cdb5"></i>Typical 0.40–0.55</span>
+              <span><i class="swatch" style="background:#a89a7e"></i>Strong 0.55–0.70</span>
+              <span><i class="swatch" style="background:#1a1712"></i>Exceptional &gt;0.70</span>
+            </div>
+
+            <div class="barrow">
+              <div class="rowlabel"><div class="r">Explorer</div><div class="c">23 accounts</div></div>
+              <div class="bar">
+                <div class="seg" style="flex-grow:3;background:#9e2b1e;color:#f4f1ea">3</div>
+                <div class="seg" style="flex-grow:8;background:#d8cdb5;color:#1a1712">8</div>
+                <div class="seg" style="flex-grow:6;background:#a89a7e;color:#f4f1ea">6</div>
+                <div class="seg" style="flex-grow:6;background:#1a1712;color:#f4f1ea">6</div>
+              </div>
+            </div>
+            <div class="barrow">
+              <div class="rowlabel"><div class="r">Admin</div><div class="c">20 accounts</div></div>
+              <div class="bar">
+                <div class="seg" style="flex-grow:7;background:#9e2b1e;color:#f4f1ea">7</div>
+                <div class="seg" style="flex-grow:3;background:#d8cdb5;color:#1a1712">3</div>
+                <div class="seg" style="flex-grow:4;background:#a89a7e;color:#f4f1ea">4</div>
+                <div class="seg" style="flex-grow:6;background:#1a1712;color:#f4f1ea">6</div>
+              </div>
+            </div>
+
+            <!-- DETAILED ACTIVITY -->
+            <h2 class="section">Detailed activity</h2>
+            <div class="table">
+              <div class="thead">
+                <div class="th col-cust">Customer</div>
+                <div class="th col-role">Role</div>
+                <div class="th col-7d num-cell">7d</div>
+                <div class="th col-30d num-cell">30d</div>
+                <div class="th col-ratio num-cell">7d / 30d</div>
+                <div class="th col-band">Band</div>
+                <div class="th col-e7 num-cell">Events 7d</div>
+                <div class="th col-e30 num-cell">Events 30d</div>
+              </div>
+              <div id="rows"></div>
+            </div>
+            <div class="tfoot">Showing 1–10 of 43 rows</div>
+
+            <!-- RECOMMENDATIONS -->
+            <h2 class="section" style="margin-bottom:28px;">Recommended action</h2>
+            <div class="rec">
+              <div class="idx">01</div>
+              <div class="body">
+                <div class="h">Prioritize admin reactivation before explorer reactivation.</div>
+                <div class="p">Portfolio ratios are comparable, but 7 of 20 admin-active accounts sit below typical against 3 of 23 explorer-active. The immediate weakness is admin consistency by account, not overall volume.</div>
+              </div>
+            </div>
+            <div class="rec">
+              <div class="idx">02</div>
+              <div class="body">
+                <div class="h">Start with Inhabit for a role-wide intervention.</div>
+                <div class="p">It is below typical for both roles — 10 of 27 admins and 4 of 12 explorers active in 7 days — making it the single clearest cross-role adoption risk in the portfolio.</div>
+              </div>
+            </div>
+            <div class="rec">
+              <div class="idx">03</div>
+              <div class="body">
+                <div class="h">Treat Conoco and Blend as explorer expansion, not dormant accounts.</div>
+                <div class="p">Conoco has the second-largest explorer base at 174 monthly actives but only 44.25% recency; Blend has 98 monthly explorers at 46.94%. Lift here improves both scale and recency.</div>
+              </div>
+            </div>
+            <div class="rec">
+              <div class="idx">04</div>
+              <div class="body">
+                <div class="h">Use Nykaa, Propertyfinder, Rubrik and Cisco as success patterns.</div>
+                <div class="p">Nykaa and Propertyfinder pair large explorer bases with strong ratios, Rubrik holds the largest admin base at 65.91%, and Cisco is strong on explorers while typical on admins.</div>
+              </div>
+            </div>
+
+            <!-- METHOD -->
+            <h2 class="section">Method and caveats</h2>
+            <div class="method">
+              <p>Covers the last 7 and 30 days of qualifying activity; an active user has at least one qualifying event in the period. Accounts restricted to instances.type = customer, with internal users, instances and partners excluded, and low-value infrastructure events filtered out.</p>
+              <p>Roles resolve from userRoleIds; a dual-role event counts in both segments. Engagement ratio is active_users_7d ÷ active_users_30d, banded Below-typical &lt;0.40, Typical 0.40–0.55, Strong 0.55–0.70, Exceptional &gt;0.70.</p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  var BANDS = {
+    Exceptional: '#1a1712',
+    Strong: '#a89a7e',
+    Typical: '#d8cdb5',
+    'Below-typical': '#9e2b1e'
+  };
+  var ROWS = [
+    ['101gen','admin','4','4','100%','Exceptional','8,015','14,352'],
+    ['101gen','explorer','2','2','100%','Exceptional','2,882','3,869'],
+    ['1mg','admin','1','2','50.0%','Typical','87','2,178'],
+    ['1mg','explorer','30','41','73.2%','Exceptional','19,535','79,894'],
+    ['arm','admin','2','2','100%','Exceptional','8,830','32,712'],
+    ['arm','explorer','22','32','68.8%','Strong','28,699','67,138'],
+    ['blend','admin','2','6','33.3%','Below-typical','905','6,345'],
+    ['blend','explorer','46','98','46.9%','Typical','66,702','135,454'],
+    ['cisco','admin','16','32','50.0%','Typical','28,689','67,248'],
+    ['cisco','explorer','101','169','59.8%','Strong','59,758','221,027']
+  ];
+  var html = ROWS.map(function (r) {
+    var band = r[5];
+    var isBelow = band === 'Below-typical';
+    return '<div class="tr">' +
+      '<div class="td col-cust cust">' + r[0] + '</div>' +
+      '<div class="td col-role role">' + r[1] + '</div>' +
+      '<div class="td col-7d num-cell">' + r[2] + '</div>' +
+      '<div class="td col-30d num-cell">' + r[3] + '</div>' +
+      '<div class="td col-ratio num-cell ratio' + (isBelow ? ' below-text' : '') + '">' + r[4] + '</div>' +
+      '<div class="td col-band"><span class="bandcell">' +
+        '<span class="banddot" style="background:' + BANDS[band] + '"></span>' +
+        '<span' + (isBelow ? ' class="below-text"' : '') + '>' + band + '</span>' +
+      '</span></div>' +
+      '<div class="td col-e7 num-cell">' + r[6] + '</div>' +
+      '<div class="td col-e30 num-cell">' + r[7] + '</div>' +
+    '</div>';
+  }).join('');
+  document.getElementById('rows').innerHTML = html;
+</script>
+
+</body>
+</html>
