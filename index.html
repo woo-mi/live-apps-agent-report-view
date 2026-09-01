@@ -162,7 +162,7 @@
   .metric .lab { font-size: 17px; line-height: 22px; color: var(--ink-strong); margin-top: 6px; }
   .metric .sub { font-size: 13px; line-height: 16px; color: var(--muted-2); margin-top: 8px; }
 
-  hr.rule { border: 0; border-top: 1px solid #e7e4dd; margin: 56px 0 0; }
+  hr.rule { border: 0; border-top: 1px solid #dddddd; margin: 56px 0 0; }
 
   h2.section {
     font-size: 24px; line-height: 30px; font-weight: 700; color: var(--ink);
@@ -226,8 +226,8 @@
   }
 
   /* ---------- Recommendations ---------- */
-  .rec { display: flex; gap: 24px; padding: 24px 0; border-top: 1px solid #e7e4dd; }
-  .rec:first-of-type { border-top: 0; }
+  .rec { display: flex; gap: 24px; padding: 24px 0; }
+  .rec + .rec { border-top: 1px solid #e6e6e6; }
   .rec .idx {
     width: 26px; flex-shrink: 0;
     font-size: 24px; line-height: 29px; letter-spacing: -0.02em;
@@ -426,6 +426,7 @@
             </div>
 
             <!-- METHOD -->
+            <hr class="rule">
             <h2 class="section">Method and caveats</h2>
             <div class="method">
               <p>Covers the last 7 and 30 days of qualifying activity; an active user has at least one qualifying event in the period. Accounts restricted to instances.type = customer, with internal users, instances and partners excluded, and low-value infrastructure events filtered out.</p>
