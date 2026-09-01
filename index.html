@@ -226,24 +226,25 @@
   /* ---------- Financial P&L table ---------- */
   .fin-card {
     margin-top: 40px;
+    height: 528px;
     border: 0.5px solid rgba(31, 30, 29, 0.3);
     border-radius: 8px;
     overflow: hidden;
     font-family: system-ui, sans-serif;
   }
-  .fin-scroll { overflow-x: auto; }
-  .fin-scroll::-webkit-scrollbar { height: 8px; }
+  .fin-scroll { height: 100%; overflow: auto; }
+  .fin-scroll::-webkit-scrollbar { width: 8px; height: 8px; }
   .fin-scroll::-webkit-scrollbar-thumb { background: rgba(31,30,29,0.10); border-radius: 100px; }
   .fin-inner { min-width: 1336px; background: #fff; }
   .fin-topband { height: 32px; }
   .fin-body { padding: 0 0 24px 16px; }
 
-  .fin-yearhead { display: flex; align-items: flex-end; height: 32px; font-size: 13px; line-height: 16px; color: #b0b0b0; }
+  .fin-yearhead { position: sticky; top: 0; z-index: 3; background: #fff; display: flex; align-items: flex-end; height: 32px; font-size: 13px; line-height: 16px; color: #b0b0b0; }
   .fin-yearhead .lbl-spacer { flex: 1; min-width: 360px; }
   .fin-yearhead .yr { width: 488px; padding-left: 10px; flex-shrink: 0; }
   .fin-yearhead .yr.y2 { border-left: 1px solid #ececec; }
 
-  .fin-qhead { display: flex; align-items: center; height: 40px; border-bottom: 1.5px solid #d8d8d8; font-size: 13px; color: #8a8a8a; }
+  .fin-qhead { position: sticky; top: 32px; z-index: 3; background: #fff; display: flex; align-items: center; height: 40px; border-bottom: 1.5px solid #d8d8d8; font-size: 13px; color: #8a8a8a; }
   .fin-qhead .lblcol { flex: 1; min-width: 360px; }
 
   .fin-num { width: 122px; padding-right: 6px; text-align: right; flex-shrink: 0; }
