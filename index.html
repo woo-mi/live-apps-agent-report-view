@@ -118,6 +118,8 @@
   .card {
     max-width: 1021px; margin: 0 auto;
     background: var(--panel);
+    border: 1px solid #e8e8e8;
+    border-radius: 20px;
     padding: 40px 48px 64px;
   }
 
@@ -231,20 +233,27 @@
     border-radius: 8px;
     overflow: hidden;
     font-family: system-ui, sans-serif;
+    display: flex;
+    flex-direction: column;
   }
-  .fin-scroll { height: 100%; overflow: auto; }
-  .fin-scroll::-webkit-scrollbar { width: 8px; height: 8px; }
-  .fin-scroll::-webkit-scrollbar-thumb { background: rgba(31,30,29,0.10); border-radius: 100px; }
-  .fin-inner { min-width: 1336px; background: #fff; }
+  .fin-headwrap { flex-shrink: 0; overflow: hidden; background: #fff; }
+  .fin-head-inner { min-width: 1336px; padding-left: 16px; will-change: transform; }
+  .fin-bodyscroll { flex: 1; overflow: auto; }
+  .fin-bodyscroll::-webkit-scrollbar { width: 14px; height: 12px; }
+  .fin-bodyscroll::-webkit-scrollbar-track { background: transparent; }
+  .fin-bodyscroll::-webkit-scrollbar-thumb {
+    background: rgba(31,30,29,0.16); border-radius: 100px;
+    border: 4px solid #fff; background-clip: padding-box;
+  }
+  .fin-body-inner { min-width: 1336px; padding: 0 0 24px 16px; }
   .fin-topband { height: 32px; }
-  .fin-body { padding: 0 0 24px 16px; }
 
-  .fin-yearhead { position: sticky; top: 0; z-index: 3; background: #fff; display: flex; align-items: flex-end; height: 32px; font-size: 13px; line-height: 16px; color: #b0b0b0; }
+  .fin-yearhead { display: flex; align-items: flex-end; height: 32px; font-size: 13px; line-height: 16px; color: #b0b0b0; }
   .fin-yearhead .lbl-spacer { flex: 1; min-width: 360px; }
   .fin-yearhead .yr { width: 488px; padding-left: 10px; flex-shrink: 0; }
   .fin-yearhead .yr.y2 { border-left: 1px solid #ececec; }
 
-  .fin-qhead { position: sticky; top: 32px; z-index: 3; background: #fff; display: flex; align-items: center; height: 40px; border-bottom: 1.5px solid #d8d8d8; font-size: 13px; color: #8a8a8a; }
+  .fin-qhead { display: flex; align-items: center; height: 40px; border-bottom: 1.5px solid #d8d8d8; font-size: 13px; color: #8a8a8a; }
   .fin-qhead .lblcol { flex: 1; min-width: 360px; }
 
   .fin-num { width: 122px; padding-right: 6px; text-align: right; flex-shrink: 0; }
@@ -421,28 +430,30 @@
             <!-- DETAILED ACTIVITY -->
             <h2 class="section">Detailed activity</h2>
             <div class="fin-card">
-              <div class="fin-scroll">
-                <div class="fin-inner">
+              <div class="fin-headwrap">
+                <div class="fin-head-inner">
                   <div class="fin-topband"></div>
-                  <div class="fin-body">
-                    <div class="fin-yearhead">
-                      <div class="lbl-spacer"></div>
-                      <div class="yr">2024</div>
-                      <div class="yr y2">2025</div>
-                    </div>
-                    <div class="fin-qhead">
-                      <div class="lblcol">Account</div>
-                      <div class="fin-num">Q1</div>
-                      <div class="fin-num">Q2</div>
-                      <div class="fin-num">Q3</div>
-                      <div class="fin-num">Q4</div>
-                      <div class="fin-num y2q1">Q1</div>
-                      <div class="fin-num">Q2</div>
-                      <div class="fin-num">Q3</div>
-                      <div class="fin-num">Q4</div>
-                    </div>
-                    <div id="fin-rows"></div>
+                  <div class="fin-yearhead">
+                    <div class="lbl-spacer"></div>
+                    <div class="yr">2024</div>
+                    <div class="yr y2">2025</div>
                   </div>
+                  <div class="fin-qhead">
+                    <div class="lblcol">Account</div>
+                    <div class="fin-num">Q1</div>
+                    <div class="fin-num">Q2</div>
+                    <div class="fin-num">Q3</div>
+                    <div class="fin-num">Q4</div>
+                    <div class="fin-num y2q1">Q1</div>
+                    <div class="fin-num">Q2</div>
+                    <div class="fin-num">Q3</div>
+                    <div class="fin-num">Q4</div>
+                  </div>
+                </div>
+              </div>
+              <div class="fin-bodyscroll">
+                <div class="fin-body-inner">
+                  <div id="fin-rows"></div>
                 </div>
               </div>
             </div>
@@ -554,6 +565,15 @@
     return '<div class="' + cls + '">' + lbl + nums + '</div>';
   }).join('');
   document.getElementById('fin-rows').innerHTML = fin;
+
+  // Keep the fixed header aligned with the body's horizontal scroll
+  var finBody = document.querySelector('.fin-bodyscroll');
+  var finHead = document.querySelector('.fin-head-inner');
+  if (finBody && finHead) {
+    finBody.addEventListener('scroll', function () {
+      finHead.style.transform = 'translateX(' + (-finBody.scrollLeft) + 'px)';
+    });
+  }
 </script>
 
 </body>
