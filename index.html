@@ -232,6 +232,46 @@
     color: var(--muted-warm); margin-top: 18px;
   }
 
+  /* ---------- Financial P&L table ---------- */
+  .fin-card {
+    margin-top: 40px;
+    border: 0.5px solid rgba(31, 30, 29, 0.3);
+    border-radius: 8px;
+    overflow: hidden;
+    font-family: system-ui, sans-serif;
+  }
+  .fin-scroll { overflow-x: auto; }
+  .fin-scroll::-webkit-scrollbar { height: 8px; }
+  .fin-scroll::-webkit-scrollbar-thumb { background: rgba(31,30,29,0.10); border-radius: 100px; }
+  .fin-inner { min-width: 1336px; background: #fff; }
+  .fin-topband { height: 32px; }
+  .fin-body { padding: 0 0 24px 16px; }
+
+  .fin-yearhead { display: flex; align-items: flex-end; height: 32px; font-size: 13px; line-height: 16px; color: #b0b0b0; }
+  .fin-yearhead .lbl-spacer { flex: 1; min-width: 360px; }
+  .fin-yearhead .yr { width: 488px; padding-left: 10px; flex-shrink: 0; }
+  .fin-yearhead .yr.y2 { border-left: 1px solid #ececec; }
+
+  .fin-qhead { display: flex; align-items: center; height: 40px; border-bottom: 1.5px solid #d8d8d8; font-size: 13px; color: #8a8a8a; }
+  .fin-qhead .lblcol { flex: 1; min-width: 360px; }
+
+  .fin-num { width: 122px; padding-right: 6px; text-align: right; flex-shrink: 0; }
+  .fin-num.y2q1 { border-left: 1px solid #ececec; }
+
+  .fin-row { display: flex; align-items: center; height: 40px; border-bottom: 1px solid #f2f2f2; color: #333444; font-size: 14px; line-height: 18px; }
+  .fin-row .lblcol { flex: 1; min-width: 360px; display: flex; align-items: center; gap: 8px; }
+  .fin-row.lvl0 { font-weight: 600; }
+  .fin-row.lvl0 .lblcol { padding-left: 0; }
+  .fin-row.lvl1 { font-weight: 600; }
+  .fin-row.lvl1 .lblcol { padding-left: 20px; }
+  .fin-row.lvl2 { font-weight: 400; }
+  .fin-row.lvl2 .lblcol { padding-left: 44px; }
+  .fin-row.noborder { border-bottom: 0; }
+  .fin-row.net { font-weight: 700; height: 44px; border-top: 2px solid #333444; border-bottom: 2px solid #333444; }
+  .fin-code { color: #a3a3a3; font-size: 13px; font-weight: 400; }
+  .fin-chev { flex-shrink: 0; display: flex; }
+  .fin-note { padding-top: 14px; color: #a3a3a3; font-size: 12px; line-height: 16px; font-family: system-ui, sans-serif; }
+
   /* ---------- Recommendations ---------- */
   .rec { display: flex; gap: 24px; padding: 24px 0; }
   .rec + .rec { border-top: 1px solid #e6e6e6; }
@@ -388,20 +428,33 @@
 
             <!-- DETAILED ACTIVITY -->
             <h2 class="section">Detailed activity</h2>
-            <div class="table">
-              <div class="thead">
-                <div class="th col-cust">Customer</div>
-                <div class="th col-role">Role</div>
-                <div class="th col-7d num-cell">7d</div>
-                <div class="th col-30d num-cell">30d</div>
-                <div class="th col-ratio num-cell">7d / 30d</div>
-                <div class="th col-band">Band</div>
-                <div class="th col-e7 num-cell">Events 7d</div>
-                <div class="th col-e30 num-cell">Events 30d</div>
+            <div class="fin-card">
+              <div class="fin-scroll">
+                <div class="fin-inner">
+                  <div class="fin-topband"></div>
+                  <div class="fin-body">
+                    <div class="fin-yearhead">
+                      <div class="lbl-spacer"></div>
+                      <div class="yr">2024</div>
+                      <div class="yr y2">2025</div>
+                    </div>
+                    <div class="fin-qhead">
+                      <div class="lblcol">Account</div>
+                      <div class="fin-num">Q1</div>
+                      <div class="fin-num">Q2</div>
+                      <div class="fin-num">Q3</div>
+                      <div class="fin-num">Q4</div>
+                      <div class="fin-num y2q1">Q1</div>
+                      <div class="fin-num">Q2</div>
+                      <div class="fin-num">Q3</div>
+                      <div class="fin-num">Q4</div>
+                    </div>
+                    <div id="fin-rows"></div>
+                  </div>
+                </div>
               </div>
-              <div id="rows"></div>
             </div>
-            <div class="tfoot">Showing 1–10 of 43 rows</div>
+            <div class="fin-note">Expenses shown as negatives, in parentheses. Report order preserved.</div>
 
             <!-- RECOMMENDATIONS -->
             <h2 class="section" style="margin-bottom:0;">Recommended action</h2>
@@ -449,42 +502,66 @@
 </div>
 
 <script>
-  var BANDS = {
-    Exceptional: '#1a1712',
-    Strong: '#a89a7e',
-    Typical: '#d8cdb5',
-    'Below-typical': '#9e2b1e'
-  };
-  var ROWS = [
-    ['101gen','admin','4','4','100%','Exceptional','8,015','14,352'],
-    ['101gen','explorer','2','2','100%','Exceptional','2,882','3,869'],
-    ['1mg','admin','1','2','50.0%','Typical','87','2,178'],
-    ['1mg','explorer','30','41','73.2%','Exceptional','19,535','79,894'],
-    ['arm','admin','2','2','100%','Exceptional','8,830','32,712'],
-    ['arm','explorer','22','32','68.8%','Strong','28,699','67,138'],
-    ['blend','admin','2','6','33.3%','Below-typical','905','6,345'],
-    ['blend','explorer','46','98','46.9%','Typical','66,702','135,454'],
-    ['cisco','admin','16','32','50.0%','Typical','28,689','67,248'],
-    ['cisco','explorer','101','169','59.8%','Strong','59,758','221,027']
+  var FROWS = [
+    {l:0, n:'Total Revenue', c:'', v:['3,502,248','3,877,771','3,951,901','5,276,156','4,543,807','5,300,190','5,189,232','6,317,208']},
+    {l:1, n:'Subscription Revenue', c:'', v:['2,753,023','3,450,383','3,411,438','4,637,990','3,693,592','4,397,799','4,380,205','5,220,295']},
+    {l:2, n:'Subscription Revenue - Platform', c:'4010', v:['1,986,279','2,755,596','2,614,086','3,611,366','2,578,921','3,326,676','3,399,022','3,330,222']},
+    {l:2, n:'Subscription Revenue - Analytics', c:'4020', v:['398,063','331,800','364,732','386,873','449,489','570,719','468,589','716,809']},
+    {l:2, n:'Subscription Revenue - Embedded', c:'4030', v:['368,682','362,987','432,621','639,750','665,182','500,404','512,594','1,173,263']},
+    {l:1, n:'Services Revenue', c:'', v:['749,224','427,389','540,463','638,166','850,215','902,391','809,027','1,096,914']},
+    {l:2, n:'Professional Services Revenue', c:'4110', v:['611,933','276,386','464,102','510,195','705,948','766,428','651,365','906,865']},
+    {l:2, n:'Premium Support Revenue', c:'4120', v:['137,291','151,003','76,361','127,971','144,267','135,963','157,662','190,048']},
+    {l:0, n:'Total Cost of Revenue', c:'', v:['(1,064,643)','(1,034,589)','(1,075,247)','(1,382,738)','(1,382,670)','(1,581,853)','(1,449,187)','(1,815,378)']},
+    {l:1, n:'Subscription COGS', c:'', v:['(610,327)','(756,671)','(751,367)','(973,234)','(843,564)','(1,013,473)','(919,553)','(1,108,549)']},
+    {l:2, n:'Hosting & Infrastructure', c:'5010', v:['(307,491)','(391,911)','(368,898)','(494,627)','(394,866)','(498,620)','(385,679)','(499,347)']},
+    {l:2, n:'Third-party Licenses', c:'5020', v:['(124,319)','(158,075)','(150,997)','(216,162)','(170,076)','(200,784)','(197,835)','(242,323)']},
+    {l:2, n:'Customer Support Payroll', c:'5030', v:['(178,517)','(206,685)','(231,472)','(262,446)','(278,622)','(314,070)','(336,039)','(366,879)']},
+    {l:1, n:'Services COGS', c:'', v:['(454,316)','(277,918)','(323,880)','(409,504)','(539,106)','(568,380)','(529,634)','(706,829)']},
+    {l:2, n:'Services Delivery Payroll', c:'5110', v:['(370,354)','(228,179)','(265,329)','(339,919)','(448,013)','(475,843)','(425,475)','(582,847)']},
+    {l:2, n:'Subcontractors', c:'5120', nb:true, v:['(83,962)','(49,739)','(58,551)','(69,585)','(91,093)','(92,537)','(104,159)','(123,982)']},
+    {l:0, n:'Gross Profit', c:'', v:['2,437,605','2,843,182','2,876,655','3,893,418','3,161,137','3,718,337','3,740,045','4,501,830']},
+    {l:0, n:'Total Operating Expenses', c:'', v:['(3,720,333)','(4,118,426)','(4,355,024)','(5,070,624)','(4,975,055)','(5,482,782)','(6,120,032)','(6,499,205)']},
+    {l:1, n:'Sales & Marketing', c:'', v:['(1,344,167)','(1,560,412)','(1,619,301)','(2,087,056)','(1,794,826)','(2,233,786)','(2,248,454)','(2,608,780)']},
+    {l:2, n:'Sales Payroll', c:'6010', v:['(608,277)','(654,080)','(738,488)','(805,491)','(793,151)','(865,929)','(1,087,505)','(1,158,603)']},
+    {l:2, n:'Sales Commissions', c:'6020', v:['(219,242)','(253,996)','(245,424)','(362,806)','(303,663)','(360,299)','(343,130)','(405,367)']},
+    {l:2, n:'Digital Advertising', c:'6030', v:['(359,277)','(407,837)','(445,150)','(631,574)','(505,697)','(525,598)','(590,961)','(722,846)']},
+    {l:2, n:'Events & Conferences', c:'6040', v:['(88,753)','(173,790)','(100,081)','(180,351)','(105,555)','(392,583)','(110,829)','(173,317)']},
+    {l:2, n:'Travel & Entertainment', c:'6050', v:['(68,618)','(70,708)','(90,159)','(106,833)','(86,760)','(89,377)','(116,029)','(148,647)']},
+    {l:1, n:'Research & Development', c:'', v:['(1,650,408)','(1,894,069)','(2,048,900)','(2,256,175)','(2,262,809)','(2,451,499)','(2,809,857)','(3,005,457)']},
+    {l:2, n:'Engineering Payroll', c:'6110', v:['(1,123,363)','(1,307,617)','(1,419,780)','(1,559,617)','(1,552,259)','(1,691,068)','(1,961,818)','(2,124,298)']},
+    {l:2, n:'Product & Design Payroll', c:'6120', v:['(388,527)','(426,611)','(452,172)','(485,873)','(516,258)','(560,013)','(587,333)','(626,566)']},
+    {l:2, n:'Dev Cloud & Tooling', c:'6130', v:['(138,519)','(159,841)','(176,949)','(210,686)','(194,292)','(200,419)','(260,707)','(254,593)']},
+    {l:1, n:'General & Administrative', c:'', v:['(725,757)','(663,945)','(686,823)','(727,393)','(917,420)','(797,496)','(1,061,721)','(884,967)']},
+    {l:2, n:'G&A Payroll', c:'6210', v:['(231,533)','(244,325)','(262,102)','(283,313)','(297,403)','(321,708)','(339,837)','(346,491)']},
+    {l:2, n:'Rent & Facilities', c:'6220', v:['(186,000)','(186,000)','(186,000)','(186,000)','(219,480)','(219,480)','(219,480)','(219,480)']},
+    {l:2, n:'Legal & Accounting', c:'6230', v:['(180,778)','(99,575)','(99,130)','(99,531)','(249,780)','(92,583)','(110,985)','(107,229)']},
+    {l:2, n:'Insurance', c:'6240', v:['(43,500)','(43,500)','(43,500)','(43,500)','(47,850)','(47,850)','(47,850)','(47,850)']},
+    {l:2, n:'Software & IT', c:'6250', v:['(70,446)','(76,081)','(83,434)','(89,621)','(86,688)','(97,252)','(111,077)','(126,038)']},
+    {l:2, n:'Bad Debt Expense', c:'6260', nb:true, v:['(13,501)','(14,464)','(12,657)','(25,429)','(16,219)','(18,624)','(232,491)','(37,879)']},
+    {l:0, n:'Operating Income', c:'', v:['(1,282,728)','(1,275,244)','(1,478,370)','(1,177,206)','(1,813,918)','(1,764,445)','(2,379,987)','(1,997,375)']},
+    {l:0, n:'Total Other Income & Expense', c:'', v:['(228,075)','(231,350)','(244,591)','(286,718)','(271,950)','(287,321)','(314,058)','(360,245)']},
+    {l:1, n:'Depreciation & Amortization', c:'', v:['(267,960)','(279,840)','(291,720)','(303,600)','(315,480)','(327,360)','(339,240)','(351,120)']},
+    {l:2, n:'Depreciation & Amortization', c:'7010', v:['(267,960)','(279,840)','(291,720)','(303,600)','(315,480)','(327,360)','(339,240)','(351,120)']},
+    {l:1, n:'Interest & Other', c:'', v:['82,573','91,905','88,322','88,736','88,633','107,071','90,115','87,471']},
+    {l:2, n:'Interest Income', c:'7110', v:['145,573','154,905','151,322','151,736','151,633','170,071','153,115','150,471']},
+    {l:2, n:'Interest Expense', c:'7120', v:['(63,000)','(63,000)','(63,000)','(63,000)','(63,000)','(63,000)','(63,000)','(63,000)']},
+    {l:1, n:'Taxes', c:'', v:['(42,688)','(43,415)','(41,192)','(71,854)','(45,103)','(67,032)','(64,932)','(96,596)']},
+    {l:2, n:'Income Tax Expense', c:'8010', v:['(42,688)','(43,415)','(41,192)','(71,854)','(45,103)','(67,032)','(64,932)','(96,596)']},
+    {net:true, n:'Net Income', c:'', v:['(1,510,803)','(1,506,594)','(1,722,960)','(1,463,924)','(2,085,868)','(2,051,766)','(2,694,044)','(2,357,620)']}
   ];
-  var html = ROWS.map(function (r) {
-    var band = r[5];
-    var isBelow = band === 'Below-typical';
-    return '<div class="tr">' +
-      '<div class="td col-cust cust">' + r[0] + '</div>' +
-      '<div class="td col-role role">' + r[1] + '</div>' +
-      '<div class="td col-7d num-cell">' + r[2] + '</div>' +
-      '<div class="td col-30d num-cell">' + r[3] + '</div>' +
-      '<div class="td col-ratio num-cell ratio' + (isBelow ? ' below-text' : '') + '">' + r[4] + '</div>' +
-      '<div class="td col-band"><span class="bandcell">' +
-        '<span class="banddot" style="background:' + BANDS[band] + '"></span>' +
-        '<span' + (isBelow ? ' class="below-text"' : '') + '>' + band + '</span>' +
-      '</span></div>' +
-      '<div class="td col-e7 num-cell">' + r[6] + '</div>' +
-      '<div class="td col-e30 num-cell">' + r[7] + '</div>' +
-    '</div>';
+  var CHEV = '<svg class="fin-chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#8a8a8a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  var fin = FROWS.map(function (r) {
+    var cls = 'fin-row ' + (r.net ? 'net' : 'lvl' + r.l) + (r.nb ? ' noborder' : '');
+    var chev = (r.l === 1 && !r.net) ? CHEV : '';
+    var code = r.c ? '<span class="fin-code">' + r.c + '</span>' : '';
+    var lbl = '<div class="lblcol">' + chev + '<span>' + esc(r.n) + '</span>' + code + '</div>';
+    var nums = r.v.map(function (x, i) {
+      return '<div class="fin-num' + (i === 4 ? ' y2q1' : '') + '">' + x + '</div>';
+    }).join('');
+    return '<div class="' + cls + '">' + lbl + nums + '</div>';
   }).join('');
-  document.getElementById('rows').innerHTML = html;
+  document.getElementById('fin-rows').innerHTML = fin;
 </script>
 
 </body>
