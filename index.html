@@ -135,10 +135,9 @@
     margin: 6px 0 0;
   }
 
-  .head-grid {
-    display: grid; grid-template-columns: 500px 1fr;
-    column-gap: 183px; margin-top: 56px;
-  }
+  .head-overview { margin-top: 56px; }
+  .head-metrics { margin-top: 40px; }
+  .metric-row { display: grid; grid-template-columns: 322px auto; align-items: start; }
   .collabel {
     font-size: 12px; letter-spacing: 0.4px;
     font-weight: 400; color: var(--label); line-height: 16px;
@@ -146,7 +145,6 @@
   }
   .lede { font-size: 14px; line-height: 20px; color: var(--body); margin: 0; max-width: 500px; }
 
-  .metric + .metric { margin-top: 36px; }
   .metric .num {
     font-size: 18px; line-height: 26px;
     font-weight: 600; color: var(--ink);
@@ -154,7 +152,7 @@
   .metric .lab { font-size: 13px; line-height: 18px; font-weight: 500; color: var(--ink); margin-top: 4px; }
   .metric .sub { font-size: 12px; line-height: 16px; color: var(--metric-sub); margin-top: 4px; }
 
-  hr.rule { border: 0; border-top: 1px solid var(--rule); margin: 64px 0 0; }
+  hr.rule { border: 0; border-top: 1px solid var(--rule); margin: 48px 0 0; }
 
   h2.section {
     font-size: 22px; line-height: 30px; font-weight: 600; color: var(--ink);
@@ -291,7 +289,7 @@
 
   @media (max-width: 1080px) {
     .card { padding: 40px 24px 48px; }
-    .head-grid { grid-template-columns: 1fr; column-gap: 0; row-gap: 40px; }
+    .metric-row { grid-template-columns: 1fr; row-gap: 28px; }
     .method { grid-template-columns: 1fr; column-gap: 0; row-gap: 24px; }
   }
 </style>
@@ -373,13 +371,13 @@
             <div class="eyebrow">Wisdom · Engagement Analysis</div>
             <h1 class="title">One Portfolio, Two Roles</h1>
 
-            <div class="head-grid">
-              <div>
-                <div class="collabel">Overview</div>
-                <p class="lede">Engagement is healthy for both roles. The risk is account-level unevenness — explorers carry three below-typical accounts, admins carry seven — which makes admin reactivation the more immediate coverage gap.</p>
-              </div>
-              <div>
-                <div class="collabel">Metrics</div>
+            <div class="head-overview">
+              <div class="collabel">Overview</div>
+              <p class="lede">Engagement is healthy for both roles. The risk is account-level unevenness — explorers carry three below-typical accounts, admins carry seven — which makes admin reactivation the more immediate coverage gap.</p>
+            </div>
+            <div class="head-metrics">
+              <div class="collabel">Metrics</div>
+              <div class="metric-row">
                 <div class="metric">
                   <div class="num">57.91%</div>
                   <div class="lab">Explorer engagement</div>
